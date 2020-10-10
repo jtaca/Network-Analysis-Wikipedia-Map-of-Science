@@ -1,0 +1,3 @@
+stop_id,stop_code,stop_name,stop_desc,stop_lat,stop_lon,zone_id,stop_url,location_type,parent_station
+T29,,Barreiro,,38.65182,-9.07972,,,,
+T08,,Terreiro do Paço,,38.70684,-9.13455,,,,

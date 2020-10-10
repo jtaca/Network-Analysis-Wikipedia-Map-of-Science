@@ -1,0 +1,5 @@
+shape_id,shape_pt_lat,shape_pt_lon,shape_pt_sequence,shape_dist_traveled
+863,38.65182,-9.07972,1,
+863,38.70684,-9.13455,2,
+864,38.70684,-9.13455,1,
+864,38.65182,-9.07972,2,
