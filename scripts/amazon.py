@@ -3,42 +3,79 @@ import matplotlib.pyplot as plt
 import math
 import numpy as np
 import pickle
+import pathlib
 
 
 # GET CURRENT PATH
-PATH = "C:/Users/danie/Desktop/Extras/CRC/Network-Analysis--Lisbon-Public-Transports/"
-# sys.getPath() something like this...
+PATH = pathlib.Path().absolute()
 
 def main():
-    with open("amazon_graph", "rb") as f:
+    with open(str(PATH) + "\\amazon_graph", "rb") as f:
         G = pickle.load(f)
 
 
     #Z (Characterize the Average Degree)                                     Z = 2E/N undirected graph | Z = E/N directed graph
     
     
-    #P(k) (Characterize the Degree Distribution)
-    for i in ["out", "in"]:
-        for j in ["out", "in"]:
-            print(f'x={i:<3}  y={j:<3} => {nx.degree_assortativity_coefficient(G, x=i, y=j, weight=None, nodes=None)}')
+    # P(k) (Characterize the Degree Distribution)
+    #print(nx.degree_histogram(G))
 
+    # What does nx.degree_assortativity_coefficient mean?
+    #for i in ["out", "in"]:
+    #    for j in ["out", "in"]:
+    #           print(f'x={i:<3}  y={j:<3} => {nx.degree_assortativity_coefficient(G, x=i, y=j, weight=None, nodes=None)}')
 
 
     #print(len(G.nodes)) # 262111
     #print(len(G.edges)) # 899792
-
     #print(nx.average_clustering(G)) # 0.419780014607673
-    #print(nx.average_degree_connectivity(G)) # Z | ~10secs, dict with (probabilities?), do a graph, probably with log scale or power scale
+
+    '''
+    sum = 0
+    dict_average_degree = nx.average_degree_connectivity(G) # P(k) | ~10secs, dict with (probabilities?), do a graph, probably with log scale or power scale
+    for i in range(len(dict_average_degree)):
+        if(i in dict_average_degree):
+            sum += dict_average_degree[i]
+            print(f'{i} : {dict_average_degree[i]}')
+    print(sum/len(dict_average_degree))
+    print(2*len(G.edges)/len(G.nodes))
+    '''
+
     #print(nx.average_neighbor_degree(G)) # ~10secs, dict with (values?), do a graph, probably with log scale or power scale
+
+    #centrality_measures(G)
+    #too_long_to_run(G)
+
+
+
+    return 0
+
+
+def centrality_measures(G):
+    print(nx.degree_centrality(G))
+    print(nx.in_degree_centrality(G))
+    print(nx.out_degree_centrality(G))
+
+
     
+    return
+
     
-    #print(nx.average_shortest_path_length(G))  # takes too long
-    #print(nx.diameter(G))                      # takes too long
-    #print(nx.radius(G))                        # takes too long
+def too_long_to_run(G):
+    # APL, takes too long
+    print(nx.average_shortest_path_length(G))
+
+    # Diameter, takes too long
+    print(nx.diameter(G))
+
+    # Radius, takes too long
+    print(nx.radius(G))
+
+    return
 
 
 def create_graph():
-    with open(PATH + "data/Amazon0302.txt", "r") as f:
+    with open(PATH + "/../data/Amazon0302.txt", "r") as f:
         amazon_data = f.read()
 
     amazon_list = amazon_data.split("\n")
@@ -86,10 +123,7 @@ THINGS TO ADD
 Centrality (various types of Centrality, we only need to choose one but we need to justify why we choosed one. Could be by trying a few or just a nice explanation)
 Z (Characterize the Average Degree)                                     Z = 2E/N undirected graph | Z = E/N directed graph
 P(k) (Characterize the Degree Distribution)
-    x=out, y=out => -0.0024793421263094566
-    x=out, y=in  => -0.0024793421263094566
-    x=in,  y=out => -0.0024793421263094566
-    x=in,  y=in  => -0.0024793421263094566
+
 
 CC (Clustering Coefficient)         
 APL (Average Path Length)                                               Takes too long
