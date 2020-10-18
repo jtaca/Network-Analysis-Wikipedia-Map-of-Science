@@ -1,13 +1,26 @@
 import osmnx as ox
 import networkx as nx
 import matplotlib.pyplot as plt
+import math
 
 # GET CURRENT PATH
 PATH = "C:/Users/danie/Desktop/Extras/CRC/Network-Analysis--Lisbon-Public-Transports/"
 
 #parse shape.txt into a vector
 def main():
-    with open(PATH + "data/metro/shapes.txt", "r", encoding="utf8") as f:
+    meios_de_transporte = ["carris", "cp", "fertagus", "metro", "rodlisboa", "soflusa", "sulfertagus", "transtejo", "tst"]
+
+    graphs = []
+    for meio in meios_de_transporte[3:3]:
+        graphs.append(createGraph(meio))
+
+    graph = createGraph("metro")
+
+    draw_graph(graph)
+
+
+def createGraph(name):
+    with open(PATH + "data/" + name + "/shapes.txt", "r", encoding="utf8") as f:
         shape_data = f.read()
 
     vec_shape = shape_data.split("\n")
@@ -18,7 +31,7 @@ def main():
     del vec_shape[-1]
 
 
-    with open(PATH + "data/metro/stops.txt", "r", encoding="utf8") as f:
+    with open(PATH + "data/" + name + "/stops.txt", "r", encoding="utf8") as f:
         stops_data = f.read()
 
     vec_stops = stops_data.split("\n")
@@ -30,14 +43,27 @@ def main():
 
 
     for shape in vec_shape:
+        isAppended = False
         for stop in vec_stops:
-            if(shape[1] == stop[4] and shape[2] == stop[5]):
+            if(shape[1] == stop[4] and shape[2] == stop[5] and not isAppended):
+                isAppended = True
                 shape.append(stop[2])
+        
+        if(not isAppended):
+            shape.append("XXXXXXXXXXXXXXXXXXX")
+        
+
+
+
+    with open(PATH + "data/" + name + "/joined.txt", "w", encoding="utf8") as f:
+        for shape in vec_shape:
+            for component in shape:
+                f.write(component + " | ")
+            f.write("\n")
+        
     
 
     #['401', '38.70085', '-9.41792', '1', '', 'Cascais']
-
-    
     G = nx.Graph()
 
     for shape in vec_shape:
@@ -46,7 +72,7 @@ def main():
         y = shape[2]
         id = int(shape[3])
         location = shape[5]
-        G.add_nodes_from([ (x + ":" + y, {"location": location, "route": route, "id": id, "x": x, "y": y}) ])
+        G.add_nodes_from([ (location, {"location": location, "route": route, "id": id, "x": x, "y": y}) ])
     
 
     nodes = dict(G.nodes)
@@ -56,29 +82,32 @@ def main():
             if(v["route"] == v2["route"] and (v["id"] == v2["id"]+1 or v["id"] == v2["id"]-1)):
                 G.add_edge(k, k2)
 
-    print(G.edges)
+    #print(G.edges)
+    return G
 
     
-    plt.subplot(121)
 
-    nx.draw(G, with_labels=True, font_weight='bold')
 
+def calcDistance(lat1, lon1, lat2, lon2):
+    R = 6371e3 # metres
+    x1 = lat1 * math.pi/180 # x, y in radians
+    x2 = lat2 * math.pi/180
+    dx = (lat2-lat1) * math.pi/180
+    dy = (lon2-lon1) * math.pi/180
+
+    a = math.sin(dx/2) * math.sin(dx/2) + math.cos(x1) * math.cos(x2) * math.sin(dy/2) * math.sin(dy/2)
+    c = 2 * math.atan2(math.sqrt(a), math.sqrt(1-a))
+
+    return R * c # in metres
+
+
+def draw_graph(graph):
+    plt.figure(figsize=(18,18))
+
+    #for graph in graphs:
+    #    nx.draw(graph, with_labels=True, font_weight='bold')
+
+    nx.draw_networkx(graph, with_labels=True, font_weight='bold')
     plt.show()
-    '''
-    place = {'city'   : 'Lisbon',
-            'country': 'Portugal'}
-    G = ox.graph_from_place(place, network_type='drive', truncate_by_edge=True)
-    fig, ax = ox.plot_graph(G, figsize=(10, 10), node_size=0, edge_color='y', edge_linewidth=0.2)
-    
-
-    Go = ox.graph.graph_from_point((38.70085,-9.41792))
-
-    ox.plot.plot_graph(Go, bbox=(38.70085+0.00300, 38.70085-0.00300, -9.41792+0.00300, -9.41792-0.00300))
-    '''
-
-
-
-
-
 
 main()
