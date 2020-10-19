@@ -2,7 +2,7 @@
 
 ![alt text](https://github.com/jtaca/Amazon-buying-patterns-a-network-analysis-approach/blob/main/MapOfScience/Wiki_connection.png)
 
-This is a preview of the network being analysed, where:
+This is a preview of the network being analysed. The coulors here represent classes of different pages, where each class represents a different class of scientific pages.
 
 <img src="https://github.com/jtaca/Amazon-buying-patterns-a-network-analysis-approach/blob/main/MapOfScience/sub.png" width="30%">
 
