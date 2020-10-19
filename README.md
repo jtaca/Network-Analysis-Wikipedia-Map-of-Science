@@ -28,4 +28,4 @@ https://figshare.com/articles/A_Wikipedia_Based_Map_of_Science/11638932
 The values currespond to data from 18th January 2020.
  
 ## License
-[MIT](https://choosealicense.com/licenses/mit/)
+[ GPL-3.0 License](http://www.gnu.org/licenses/gpl-3.0.en.html)
