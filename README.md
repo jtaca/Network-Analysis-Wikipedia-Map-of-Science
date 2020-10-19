@@ -4,7 +4,7 @@
 
 This is a preview of the network being analysed, where:
 
-<img src="https://github.com/jtaca/Amazon-buying-patterns-a-network-analysis-approach/blob/main/MapOfScience/sub.png" width="10%">
+<img src="https://github.com/jtaca/Amazon-buying-patterns-a-network-analysis-approach/blob/main/MapOfScience/sub.png" width="30%">
 
 ## Installation
 
