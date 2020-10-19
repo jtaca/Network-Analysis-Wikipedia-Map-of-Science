@@ -1,10 +1,10 @@
 # Map of Science Network: Analysing the similarity beween Wikipedia science pages.
 
-![](https://github.com/jtaca/Amazon-buying-patterns-a-network-analysis-approach/blob/main/MapOfScience/Wiki_connection.png | width=100)
+![alt text](https://github.com/jtaca/Amazon-buying-patterns-a-network-analysis-approach/blob/main/MapOfScience/Wiki_connection.png)
 
 This is a preview of the network being analysed, where:
 
-![alt text](https://github.com/jtaca/Amazon-buying-patterns-a-network-analysis-approach/blob/main/MapOfScience/sub.png =250x)
+<img src="https://github.com/jtaca/Amazon-buying-patterns-a-network-analysis-approach/blob/main/MapOfScience/sub.png" width="40%">
 
 ## Installation
 
