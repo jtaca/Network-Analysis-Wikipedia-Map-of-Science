@@ -14,6 +14,7 @@ Use the package manager [pip](https://pip.pypa.io/en/stable/) to install network
 pip install networkx
 pip install matplotlib
 pip install numpy
+pip install powerlaw
 ```
 
 ## Contributing
