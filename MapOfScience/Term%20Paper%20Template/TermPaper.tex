@@ -1,0 +1,228 @@
+%% Lab Report for EEET2493_labreport_template.tex
+%% V1.0
+%% 2019/01/16
+%% This is the template for a Lab report following an IEEE paper. Modified by Francisco Tovar after Michael Sheel original document.
+
+
+%% This is a skeleton file demonstrating the use of IEEEtran.cls
+%% (requires IEEEtran.cls version 1.8b or later) with an IEEE
+%% journal paper.
+%%
+%% Support sites:
+%% http://www.michaelshell.org/tex/ieeetran/
+%% http://www.ctan.org/pkg/ieeetran
+%% and
+%% http://www.ieee.org/
+
+%%*************************************************************************
+%% Legal Notice:
+%% This code is offered as-is without any warranty either expressed or
+%% implied; without even the implied warranty of MERCHANTABILITY or
+%% FITNESS FOR A PARTICULAR PURPOSE! 
+%% User assumes all risk.
+%% In no event shall the IEEE or any contributor to this code be liable for
+%% any damages or losses, including, but not limited to, incidental,
+%% consequential, or any other damages, resulting from the use or misuse
+%% of any information contained here.
+%%
+%% All comments are the opinions of their respective authors and are not
+%% necessarily endorsed by the IEEE.
+%%
+%% This work is distributed under the LaTeX Project Public License (LPPL)
+%% ( http://www.latex-project.org/ ) version 1.3, and may be freely used,
+%% distributed and modified. A copy of the LPPL, version 1.3, is included
+%% in the base LaTeX documentation of all distributions of LaTeX released
+%% 2003/12/01 or later.
+%% Retain all contribution notices and credits.
+%% ** Modified files should be clearly indicated as such, including  **
+%% ** renaming them and changing author support contact information. **
+%%*************************************************************************
+
+\documentclass[journal]{IEEEtran}
+
+% *** CITATION PACKAGES ***
+\usepackage[style=ieee]{biblatex} 
+\bibliography{example.bib}    
+
+% *** MATH PACKAGES ***
+\usepackage{amsmath}
+
+% *** PDF, URL AND HYPERLINK PACKAGES ***
+\usepackage{url}
+% correct bad hyphenation here
+\usepackage{graphicx}  %needed to include png, eps figures
+\usepackage{float}  % used to fix location of images i.e.\begin{figure}[H]
+\usepackage{listings} %for presenting code
+
+\begin{document}
+
+% paper title
+\title{Network Analysis: Wikipedia Map of Science}
+
+% author names 
+\author{\textbf{Group 46:} \hspace{1cm}
+Daniel Castro 87644  \hspace{1cm}
+João Tiago Aparício 97155   \hspace{1cm}
+Miguel Trinca 86490}% <-this % stops a space
+        
+
+% make the title area
+\maketitle
+
+% As a general rule, do not put math, special symbols or citations
+% in the abstract or keywords.
+
+\section{Introduction}
+In this project we are analysing a network which shows the similarities among different branches of science based on Wikipedia pages in outline of natural, formal, social and applied science. We analysed the graph and collected our metrics using Python, powerlaw: A Python Package for Analysis of Heavy-Tailed Distributions\cite{alstott2014powerlaw} and NetworkX, the package for network analysis.
+
+\section {Goals}
+
+With this experiment we intend to:
+
+\begin{itemize}
+  \item Acquire a better understanding of the NetworkX package
+  \item Interpret and compute the following metrics:
+  \begin{itemize}
+      \item Degree Distribution (P(k))
+      \item Centrality or Importance
+      \item Cluster Coefficient (CC)
+      \item Average Path Length (APL)
+    \end{itemize} 
+    \item Understand how the network grows
+    \item Infer and discuss the results of said metrics
+\end{itemize} 
+In addition to Python and its packages we will be also using Gephi to visualize our network.
+
+\section{Dataset}
+The dataset is based on the one extracted by Alberto Calderone in 2020 \cite{calderone_2020}.
+As previously mentioned, this dataset depicts the different branches of science on Wikipedia. Nodes represent Wikipedia pages of a science field. An edge between two nodes is their page similarity above a 0.3 threshold according to cosine similarity. In other words, if the pages of node i and node j have a cosine similarity above 0.3, then there is an edge between node i and j. The graph is undirected and has a total of 687 nodes and 6523 edges with an average degree of 18.9898, which means that each field is somewhat similar to 18.9898 other fields on average. To model the information in each node we used the following data structure: \begin{center}
+\verb| (0, {'name': 'Accounting', 'class':| 
+\verb|'Applied', 'url': 'https://...'})|
+\end{center}
+%\vspace{5mm}
+
+
+Each page has a class that can be either Social, Formal, Natural and Applied. The percentage of each is about 33.33\% (Pink), 28.09\% (Green), 24.89\% (Orange) and 13.68\% (Blue) respectively. The graph is represented in Fig. \ref{graph} using the Fruchterman Reingold algorithm. \\
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.45\textwidth]{network.png}
+    \caption{Graph of the Wikipedia Map of Science, color-coded by Science Class.}
+    \label{graph}
+\end{figure}
+
+By analysing the graph, we encountered five single connected components. Four of those were either pairs or triplets of nodes. These were sciences such as Coastal geography (As both natural and social sciences) and Hydrography; Oceanography and Marine Biology; And Food Science and Nutrition;
+
+\section{Degree Distribution}
+
+The \textbf{degree of a node} is the number of edges that the node has. The \textbf{Degree Distribution} is the probability distribution of these degrees over the whole network. \\
+%This metric is important since it ties to other metrics such as cluster coefficient.\\
+
+After collecting the degree of each node, we made an histogram with the results. We can observe that the majority of the nodes have only one connection. In practice, this says that each Science Wikipedia page is most likely to only have one other science page with high similarity.
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.35\textwidth]{D_dist.png}
+    \caption{Histogram of the degree distribution}
+    \label{fig:mesh1}
+\end{figure}
+
+ We believe that this dataset also follows a power law distribution, since it is based on the number of Wikipedia pages and they usually have a rapid growth in terms of cardinality and reference. So we tested this hypothesis, to \textbf{understand how the network grows}.
+\subsection{Power Law}
+An important thing that we thought to analyse in our dataset was the question of, theoretically, how would our network grow?\\
+
+A first intuitive interpretation of our problem: when a new Science arises, the tendency is to have new branches or derivations of that same science. Which makes a probable power growth in the number of Wikipedia Science pages. As they as well follow the creation of new science fields.\\ 
+
+For this reason, we decided to analyze the dataset, using the powerlaw package \cite{alstott2014powerlaw}, and the follow up article on it, Statistical Analyses Support Power Law Distributions Found in Neuronal Avalanches \cite{klaus2011statistical}.
+The Fig 3, shows us the distribution of degree probability in our network and and in a power law. On the y axis the p(k) - degree distribution and on the x axis the k, denoting number of nodes in the network.\\
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.35\textwidth]{pl.png}
+    \caption{Power law fit: we can see the degree distribution of the power law in blue and the page network in red.}
+\end{figure}
+
+The slope of our growth is \(\gamma = 5.852082324422884\), following the power law formula:
+
+ \begin{equation}
+ p(x) \propto x^{-\gamma}
+ \end{equation}
+
+According to Klaus et al. \cite{klaus2011statistical}, such a visual approach suffers from a lack of statistical rigor in identifying a significant difference between a power law and an exponential or other alternative model distributions. This problem is worsened when the availability of the data is limited, for example, for small sample sizes or when the range of values over which the distribution is analyzed is narrow.\\
+
+This means that, although our initial reasoning makes complete sense with the network growth, we have the notion that this may be an overfit because of the relatively small size of our network.\\ 
+
+In addition, typically the scaling parameter lies in the range \(2 < \gamma < 3\), however there are occasional exceptions, which we believe to be in one of them. In practise, few empirical phenomena obey power laws for all values of x. More often the power law applies only for values greater than some minimum \(X min\). In such cases we say that the tail of the distribution follows a power law. \cite{clauset2009power} 
+
+Given the \(\gamma\) value, which larger than 3, we may conclude that the tail of the distribution may follow a power law, and the network can be approximated to a random network. And the network is not scale free.
+
+
+\section{Centrality or Importance}
+How do we classify a branch of science as the most similar to every other science? Does the amount of links between other branches (in this case class) make it versatile, or is the relation between other fields? These are the type of questions we are trying to answer when computing the centrality of the nodes. By intuition, we may conjecture that the amount of links to other nodes would classify the page as important. Due to an impact on a higher number of fields, since they have more similarity and hence more influence on the concepts shared between one another, regardless of the importance of the concepts themselves.
+
+\subsection{Degree Centrality}
+To find the Hub in this network, we will start by comparing different centrality measures. Firstly we calculated the \textbf{degree centrality} to understand which science has a page with the highest degree of similarity to the remaining pages. In this case the hub is \textbf{School Psychology, as a social science} (\url{https://en.wikipedia.org/wiki/School_psychology}).
+This probably happens because this page has references to many other sciences, including biology, for the studying the of human thought process.
+
+\subsection{Eigenvector Centrality}
+To know the science that has a higher page similarity to the sciences with the highest degree of page similarity, we use the eigenvector centrality, which \textbf{yields the same result as degree centrality}, has similarity to the most prestigious sciences, or with the sciences with the highest similarity degree.
+
+\subsection{Betweenness Centrality}
+To understand which of the science pages is a bridge between different parts of the network, we use the \textbf{betweenness centrality}. In this case this tells us the hub on this centrality measure is the node that connects the most different science pages to each other. In this network that science page is \textbf{Population Biology, as a natural science} \url{https://en.wikipedia.org/wiki/Population_biology}.\\
+
+We might hypothesize that this happens because this is a field that derives from the intersection of formal sciences and natural science. The second highest betweenness centrality is  \textbf{Algorithm, as a formal science} \url{https://en.wikipedia.org/wiki/Algorithm}. This is intuitive because they can be applied in the context of any other science.
+Another science with a high degree of betweenness centrality that can be easily guessed is \textbf{Economics} (\url{https://en.wikipedia.org/wiki/Economics}) (actually the third highest betweenness centrality). This happens because it is a strong link between the social sciences and the formal sciences. 
+
+\section{Cluster Coefficient and Transitivity}
+
+Usually science fields have similar aspects between one another. By using cluster coefficients we may compute how likely that two neighbor nodes have a connection with each other. In other words, if they create triangles. This metric allows for the depiction of the network by clusters, where nodes from a cluster have similar properties.\\
+
+To analyze this we computed, using networkX, transitivity, clustering and average clustering. The first one computes the fraction of all possible triangles present in the graph (transitivity). The second computes the local cluster coefficient. And finally, the last one computes the global clustering coefficient.
+
+
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=0.35\textwidth]{cluster.png}
+    \caption{Cluster coefficient per node.}
+\end{figure}
+
+The Global Clustering Coefficient is about 0.5302 and the transitivity is approximately 0.4692.\\
+
+As we can observe, the majority of nodes have a cluster coefficient between 0.4 and 0.8, and others are really close to either 1 or 0. This will result in a global clustering coefficient and transitivity of approximately 0.53 and 0.47, respectively, which are both huge. These results imply that our network is very related, which makes sense since we are talking about branches of science, which have inter-class relations, whether it is math, physics, philosophy, etc. Nodes like “Automated reasoning”, “Statistical theory”, “Time series”, have the highest values (approx. 0.984, 0.990, 0,994 respectively), which means that they can be correlated to every branch of science.\\
+
+Looking at concrete examples and cross referencing with results of betweenness centrality (BC), we observe that pages that bridge different communities - i.e. have the highest BC value - such as “population biology”, “algorithm”, “economics” also have a very low local clustering coefficient (approx. 0.1328, 0.2387, 0.2664, respectively). This was expected, since these nodes are bridging different communities causing similarity to diminish. \\
+
+Another interesting aspect is that nodes which are close to the bridges have also a high local clustering coefficient, for instance “population ecology” (cc approx. 0.9) which is close to ”population biology” as seen above. This would suggest that these nodes are in fact bridging communities.
+
+\section{Average Path Length (APL)}
+In this case, the average shortest path length is the smallest amount of hops I have to take, on average, to be on another science field page, within Wikipedia. We could hypothesize that \textbf{the smaller the APL the more similar} (in terms of cosine similarity) \textbf{all science fields are}, since they are more interrelated with one another. \\
+
+To calculate this we only used one of the single connected components and did not use the four pairs and triplets that were disconnected from the remaining massive (relatively speaking) component with 677 nodes. The average shortest path length, approximately 3.433. Since each link represents a higher similarity between 2 pages, this means that on average the science pages are fairly indirectly similar with every other page, with the exception of the disconnected components. In other words, we can change subjects/classes with only 3.4 hops on average, meaning that pages are fairly similar. \\
+
+The small-world property is obtained \cite{davidsen2002emergence} by having a small APL and a high clustering coefficient, which is the case of our network. This implies that the growth of the APL scales in a logarithmic way with the growth of the network.
+\begin{equation}
+ L \propto log N
+ \end{equation}
+In other words, by adding more pages to our network the average path length would not differ much from what it is now. In addition, these pages would also be highly correlated to the pages already in the network since the global clustering coefficient is also high.
+ 
+
+\section{Conclusions}
+
+
+Summarizing the main ideas on this analysis, we can conclude that:
+
+It is probable that a new science page being added to the graph would have a high probability to have a similarity to only one other science page. This means that the degree distribution has a very high probability with k = 1.\\
+
+Given the results of the power law analysis, we can conclude that this network behaves approximately like a random network, and is a small-word network. Which can be corroborated by the results from the cluster coefficient and average path length analysis.\\
+
+The analysis of the centrality of our network were interesting and surprising. The School Psychology has the highest similarity and with most similar neighbors to other science Wikipedia pages. The nodes that have the highest betweenness centrality, i.e., are important bridges between the science pages, do not have a high degree centrality but they have key edges to those who have. Some science pages with this characteristic are Population Biology, Economics and Algorithms.\\
+
+Also, we got a high clustering coefficient \((\approx  0.5)\), which means that sciences neighbors are very likely to be connected. Combining this with the relatively small APL, creates the small-world property that shows us the slow growth of the APL when the graph increases its size.\\
+    
+\printbibliography
+% that's all folks
+% See you l8r #BrunaNaoFalha
+\end{document}
+
+
